@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guestbook App</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      padding: 40px;
+    }
+    
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 2.5em;
+    }
+    
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 1.1em;
+    }
+    
+    #guestList {
+      list-style: none;
+      padding: 0;
+    }
+    
+    #guestList li {
+      background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+      padding: 15px 20px;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      border-left: 4px solid #667eea;
+      font-size: 1.1em;
+      color: #333;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    #guestList li:hover {
+      transform: translateX(5px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+    }
+    
+    .loading {
+      text-align: center;
+      color: #667eea;
+      font-size: 1.2em;
+      padding: 30px;
+    }
+    
+    .error {
+      background: #fee;
+      color: #c33;
+      padding: 15px;
+      border-radius: 8px;
+      border-left: 4px solid #c33;
+    }
+    
+    .refresh-btn {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-size: 1em;
+      cursor: pointer;
+      margin-bottom: 20px;
+      transition: background 0.3s;
+    }
+    
+    .refresh-btn:hover {
+      background: #5568d3;
+    }
+    
+    .count {
+      text-align: center;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 2px solid #eee;
+      color: #666;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📖 Guestbook</h1>
+    <p class="subtitle">Welcome! Here are our guests:</p>
+    
+    <button class="refresh-btn" onclick="fetchGuests()">🔄 Refresh</button>
+    
+    <div id="content">
+      <div class="loading">Loading guests...</div>
+    </div>
+    
+    <div class="count" id="guestCount"></div>
+  </div>
+
+  <script>
+    async function fetchGuests() {
+      const contentDiv = document.getElementById('content');
+      const countDiv = document.getElementById('guestCount');
+      
+      // Show loading state
+      contentDiv.innerHTML = '<div class="loading">Loading guests...</div>';
+      countDiv.innerHTML = '';
+      
+      try {
+        const response = await fetch('/api/guests');
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const guests = await response.json();
+        
+        // Create unordered list
+        const ul = document.createElement('ul');
+        ul.id = 'guestList';
+        
+        guests.forEach(guest => {
+          const li = document.createElement('li');
+          li.textContent = guest;
+          ul.appendChild(li);
+        });
+        
+        // Update content
+        contentDiv.innerHTML = '';
+        contentDiv.appendChild(ul);
+        
+        // Update count
+        countDiv.innerHTML = `Total guests: <strong>${guests.length}</strong>`;
+        
+      } catch (error) {
+        console.error('Error fetching guests:', error);
+        contentDiv.innerHTML = `
+          <div class="error">
+            ❌ Failed to load guests. Please make sure the server is running.
+          </div>
+        `;
+      }
+    }
+    
+    // Fetch guests on page load
+    fetchGuests();
+  </script>
+</body>
+</html>
