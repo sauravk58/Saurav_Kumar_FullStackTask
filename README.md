@@ -95,10 +95,10 @@ node_modules/
 
 2. **Create the file structure:**
 ```
-   FirstName_LastName_FullStackTask/
+   FirstName_LastName_FullStackTask/ <br>
    ├── server.js   <br>
-   ├── package.json
-   ├── README.md
-   ├── .gitignore
-   └── public/
+   ├── package.json <br>
+   ├── README.md <br>
+   ├── .gitignore <br>
+   └── public/ <br>
        └── index.html
